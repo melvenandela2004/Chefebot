@@ -1,4 +1,3 @@
-<!DOCTYPE html>
 <html lang="pt">
 <head>
 <meta charset="UTF-8">
@@ -7,7 +6,7 @@
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
-<style>
+<style>    
 *{box-sizing:border-box;}
 body{
   font-family:'Segoe UI',sans-serif;
@@ -162,15 +161,17 @@ a:hover{text-decoration:underline;}
   <h2>Senha Mestra</h2>
   <input type="password" id="adminSenha" placeholder="Senha do administrador">
   <button onclick="entrarPainel()">Entrar</button>
+  <button onclick="transicao(painelSenhaBox,loginBox)">Voltar</button>
 </div>
 
-<!-- DASHBOARD SAAS -->
+<!-- DASHBOARD -->
 <div class="box hidden" id="painelBox">
   <div class="dashboard-header">
     <h2>Dashboard SaaS</h2>
     <span>Total Usuários: <b id="totalUsers">0</b></span>
   </div>
   <button onclick="sairPainel()">Sair do Painel</button>
+  <button onclick="transicao(painelBox,loginBox)">Voltar</button>
 
   <h3>Criar Conta</h3>
   <input type="text" id="numero" placeholder="Número">
@@ -333,16 +334,28 @@ async function deletarConta(id){
   }
 }
 
-// Página de sinais
+// Página de sinais -> HORA DE MOÇAMBIQUE
 function gerarSinal(){
   const quadrados = document.querySelectorAll("#quadradinhos .quadrado");
-  let horaBase = new Date();
-  horaBase.setHours(horaBase.getHours()+2);
-  let minutos = horaBase.getMinutes();
+
+  // Hora atual de Maputo (Moçambique - GMT+2)
+  let agora = new Date(new Date().toLocaleString("en-US", { timeZone: "Africa/Maputo" }));
+
+  let hora = agora.getHours();
+  let minutos = agora.getMinutes();
+
   quadrados.forEach((q,i)=>{
-    minutos += 2+i;
-    let h = horaBase.getHours().toString().padStart(2,'0');
-    let m = (minutos%60).toString().padStart(2,'0');
+    // aleatoriamente soma 2 ou 3 minutos
+    let incremento = Math.random() < 0.5 ? 2 : 3;
+    minutos += incremento;
+
+    if(minutos >= 60){
+      hora += Math.floor(minutos/60);
+      minutos = minutos % 60;
+    }
+
+    let h = (hora % 24).toString().padStart(2,'0');
+    let m = minutos.toString().padStart(2,'0');
     q.innerText = `${h}:${m}`;
   });
 }
